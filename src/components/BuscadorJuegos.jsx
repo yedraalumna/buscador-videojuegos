@@ -13,7 +13,7 @@ export default function BuscadorJuegos() {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    // Introduce tu API KEY real aquí
+    // API key de RAWG
     const API_KEY = '2ebe09493784404db03a646d548dac8d'; 
 
     const buscarEnAPI = async (nombreJuego) => {
@@ -73,7 +73,6 @@ export default function BuscadorJuegos() {
                 Buscador de videojuegos
             </Typography>
 
-            {/* NUEVO: Leyenda informativa con los comandos disponibles */}
             <Typography variant="h6" sx={{ mb: 4, color: '#666', textAlign: 'center', maxWidth: '800px' }}>
                 Comandos disponibles: <strong>"Buscar [juego]"</strong>, <strong>"Limpiar"</strong> o <strong>"Ir a inicio"</strong>
             </Typography>
