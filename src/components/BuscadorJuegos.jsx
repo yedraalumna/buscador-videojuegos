@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import { Button, Card, CardContent, CardMedia, Typography, Box } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import MicIcon from '@mui/icons-material/Mic';
 import StopIcon from '@mui/icons-material/Stop';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import StarIcon from '@mui/icons-material/Star';
+import GamepadIcon from '@mui/icons-material/Gamepad';
 
 export default function BuscadorJuegos() {
     const [juego, setJuego] = useState(null);
     const [error, setError] = useState('');
+    const navigate = useNavigate();
 
-    // API KEY de RAWG
+    // Introduce tu API KEY real aquí
     const API_KEY = '2ebe09493784404db03a646d548dac8d'; 
 
     const buscarEnAPI = async (nombreJuego) => {
@@ -42,6 +45,12 @@ export default function BuscadorJuegos() {
                 setError('');
                 resetTranscript();
             }
+        },
+        {
+            command: 'Ir a inicio',
+            callback: () => {
+                navigate('/');
+            }
         }
     ];
 
@@ -60,65 +69,79 @@ export default function BuscadorJuegos() {
             flexDirection: 'column',
             alignItems: 'center'
         }}>
-            <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 4, color: '#333', textAlign: 'center' }}>
+            <Typography variant="h2" sx={{ fontWeight: 'bold', mb: 2, color: '#333', textAlign: 'center' }}>
                 Buscador de videojuegos
             </Typography>
 
-            <Box sx={{ display: 'flex', gap: '20px', mb: 4, flexWrap: 'wrap', justifyContent: 'center' }}>
+            {/* NUEVO: Leyenda informativa con los comandos disponibles */}
+            <Typography variant="h6" sx={{ mb: 4, color: '#666', textAlign: 'center', maxWidth: '800px' }}>
+                Comandos disponibles: <strong>"Buscar [juego]"</strong>, <strong>"Limpiar"</strong> o <strong>"Ir a inicio"</strong>
+            </Typography>
+
+            <Box sx={{ display: 'flex', gap: '30px', mb: 5, flexWrap: 'wrap', justifyContent: 'center' }}>
                 <Button 
                     variant="contained" 
                     color="primary"
-                    startIcon={<MicIcon />}
+                    startIcon={<MicIcon sx={{ fontSize: 30 }} />}
                     onClick={() => SpeechRecognition.startListening({ language: 'es-ES', continuous: true })}
-                    sx={{ padding: '15px 30px', fontSize: '1.1rem', borderRadius: '15px' }}
+                    sx={{ padding: '20px 40px', fontSize: '1.2rem', borderRadius: '15px' }}
                 >
-                    Grabar audio
+                    GRABAR AUDIO
                 </Button>
                 <Button 
                     variant="contained" 
                     color="error"
-                    startIcon={<StopIcon />}
+                    startIcon={<StopIcon sx={{ fontSize: 30 }} />}
                     onClick={SpeechRecognition.stopListening}
-                    sx={{ padding: '15px 30px', fontSize: '1.1rem', borderRadius: '15px' }}
+                    sx={{ padding: '20px 40px', fontSize: '1.2rem', borderRadius: '15px' }}
                 >
-                    Parar
+                    PARAR
                 </Button>
             </Box>
 
-            <Typography variant="h6" sx={{ mb: 4, color: '#555', backgroundColor: 'white', padding: '15px', borderRadius: '10px', minWidth: '300px', textAlign: 'center' }}>
+            <Typography variant="h5" sx={{ mb: 5, color: '#555', backgroundColor: 'white', padding: '20px 30px', borderRadius: '15px', minWidth: '350px', textAlign: 'center', boxShadow: 2 }}>
                 Has dicho: <strong>{transcript}</strong>
             </Typography>
 
             {error && <Typography color="error" variant="h5" sx={{ mb: 3 }}>{error}</Typography>}
 
             {juego && (
-                <Card sx={{ maxWidth: 500, width: '100%', borderRadius: '20px', boxShadow: 5 }}>
+                <Card sx={{ maxWidth: 600, width: '100%', borderRadius: '20px', boxShadow: 6 }}>
                     {juego.background_image && (
                         <CardMedia
                             component="img"
-                            height="300"
+                            height="350"
                             image={juego.background_image}
                             alt={juego.name}
                         />
                     )}
-                    <CardContent sx={{ padding: '30px' }}>
-                        <Typography variant="h4" component="div" sx={{ fontWeight: 'bold', mb: 2 }}>
+                    <CardContent sx={{ padding: '40px' }}>
+                        <Typography variant="h3" component="div" sx={{ fontWeight: 'bold', mb: 3 }}>
                             {juego.name}
                         </Typography>
                         
-                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, color: 'text.secondary' }}>
-                            <CalendarTodayIcon sx={{ mr: 1 }} />
-                            <Typography variant="h6">
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, color: 'text.secondary' }}>
+                            <CalendarTodayIcon sx={{ mr: 2, fontSize: 30 }} />
+                            <Typography variant="h5">
                                 Fecha: {juego.released}
                             </Typography>
                         </Box>
 
-                        <Box sx={{ display: 'flex', alignItems: 'center', color: 'text.secondary' }}>
-                            <StarIcon sx={{ mr: 1, color: '#fbc02d' }} />
-                            <Typography variant="h6">
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 2, color: 'text.secondary' }}>
+                            <StarIcon sx={{ mr: 2, fontSize: 30, color: '#fbc02d' }} />
+                            <Typography variant="h5">
                                 Puntuación: {juego.rating} / 5
                             </Typography>
                         </Box>
+
+                        {juego.platforms && (
+                            <Box sx={{ display: 'flex', alignItems: 'flex-start', color: 'text.secondary', mt: 2 }}>
+                                <GamepadIcon sx={{ mr: 2, mt: 0.5, fontSize: 30, color: '#1976d2' }} />
+                                <Typography variant="h5" sx={{ lineHeight: 1.4 }}>
+                                    Plataformas: {juego.platforms.map(p => p.platform.name).join(', ')}
+                                </Typography>
+                            </Box>
+                        )}
                     </CardContent>
                 </Card>
             )}
